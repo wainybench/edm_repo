@@ -27,22 +27,16 @@ print("Model loaded, its now listening")
 #loop for listenign
 try:
     while True:
-        #raw b8s read from my mic ** this is my mic okay, not our ESPs mic, so the audio quality will be different from the ESPs mic
         data = stream.read(4000, exception_on_overflow=False)
-        
-        #fEEDING THE B8S onto the Vosk model
         if recognizer.AcceptWaveform(data):
-            #when a pause is detected, the final thing is transcribed, what it thought we said
             result = json.loads(recognizer.Result())
             print(f"\nFinal Transcribed Command {result['text']} <<<")
         else:
-            #the realtime result we see
             partial_result = json.loads(recognizer.PartialResult())
-            # ig \r overwrites the same line on console for a cleaner look
             print(f"Listening: {partial_result['partial']}", end='\r')
-            
 except KeyboardInterrupt:
     print("\nStopping ASR test...")
+finally:
     stream.stop_stream()
     stream.close()
     p.terminate()
