@@ -1,0 +1,55 @@
+import asyncio
+import json
+from vosk import Model, KaldiRecognizer
+from websockets.asyncio.server import serve
+
+HOST = "0.0.0.0"
+PORT = 6767
+SAMPLE_RATE = 16000
+
+# Loading the sihmod
+print("model loading")
+try:
+    sihmod = Model("sihmod")
+except Exception:
+    print("Error Thrown, model no found")
+    exit()
+
+print("Model loaded, waiting for the ESP32 to connect...")
+
+
+async def handler(websocket):
+    #A fresh recognizer per connection == a fresh utterance per keyword trigger.
+    recognizer = KaldiRecognizer(sihmod, SAMPLE_RATE)
+    total_bytes = 0
+    print(f"\n[CONNECTED] {websocket.remote_address}")
+
+    try:
+        async for message in websocket:
+            if not isinstance(message, (bytes, bytearray)):
+                continue  # ignore any stray text frames
+            total_bytes += len(message)
+            if recognizer.AcceptWaveform(message):
+                result = json.loads(recognizer.Result())
+                print(f"\nFinal Transcribed Command {result['text']} <<<")
+            else:
+                partial_result = json.loads(recognizer.PartialResult())
+                print(f"Listening: {partial_result['partial']}", end='\r')
+    finally:
+        final = json.loads(recognizer.FinalResult())
+        print(f"\n[DISCONNECTED] {websocket.remote_address} | "
+              f"received {total_bytes} bytes ({total_bytes / (SAMPLE_RATE * 2):.2f} s of audio) | "
+              f"final: {final['text']}")
+
+
+async def main():
+    async with serve(handler, HOST, PORT):
+        print(f"Listening on ws://{HOST}:{PORT} ...")
+        await asyncio.Future()  # run forever
+
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\nStopping ASR server...")

@@ -100,13 +100,13 @@ input_shape = (X_train.shape[1], X_train.shape[2], 1)
 #tiny cnn model
 print("Building the TinyML Model...")
 model = models.Sequential([
-    #layers.SeparableConv2D(8, (3, 3), activation='relu', input_shape=input_shape),
+    layers.SeparableConv2D(8, (3, 3), activation='relu', input_shape=input_shape),
     #sepconv is for dscnn, it is less accurate
-    layers.Conv2D(8, (3, 3), activation='relu', input_shape=input_shape),
+    #layers.Conv2D(8, (3, 3), activation='relu', input_shape=input_shape),
     layers.MaxPooling2D((2, 2)),
-    #layers.SeparableConv2D(16, (3, 3), activation='relu'),
+    layers.SeparableConv2D(16, (3, 3), activation='relu'),
     #sepconv is for dscnn, it is less accurate
-    layers.Conv2D(16, (3, 3), activation='relu'),
+    #layers.Conv2D(16, (3, 3), activation='relu'),
     layers.MaxPooling2D((2, 2)),
     layers.Flatten(),
     layers.Dense(16, activation='relu'),

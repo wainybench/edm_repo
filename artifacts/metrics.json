@@ -1,0 +1,31 @@
+{
+  "sample_rate": 16000,
+  "clip_seconds": 1.0,
+  "clip_samples": 16000,
+  "n_mfcc": 13,
+  "n_mels": 40,
+  "n_fft": 2048,
+  "hop_length": 1024,
+  "fmin": 20,
+  "fmax": 8000,
+  "center": false,
+  "threshold": 0.92,
+  "threshold_rule": "maximum validation F1",
+  "float_test_accuracy": 0.9661181026137464,
+  "float_test_precision": 0.0,
+  "float_test_recall": 0.0,
+  "float_test_f1": 0.0,
+  "int8_test_accuracy": 0.9903194578896418,
+  "int8_test_precision": 0.0,
+  "int8_test_recall": 0.0,
+  "int8_test_f1": 0.0,
+  "test_false_accepts": 25,
+  "test_negative_windows": 1023,
+  "window_level_false_accepts_per_hour": 87.97653958944281,
+  "quantization": {
+    "input_scale": 0.06307303160429001,
+    "input_zero_point": 5,
+    "output_scale": 0.00390625,
+    "output_zero_point": -128
+  }
+}
